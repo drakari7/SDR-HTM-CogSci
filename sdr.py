@@ -1,5 +1,8 @@
+from cmath import exp
 import numpy as np
 from math import comb
+
+from torch import exp_
 
 class SDR:
     def __init__(self, sdr:np.array):
@@ -37,6 +40,16 @@ def check_match(X, theta):
             if x!=y and match(x, y, theta):
                 return False
     return True
+
+def p_not(w, n, M):
+    return (w/n)**M
+
+def prob_fp_union(w, n, M):
+    return (1-p_not(w, n, M))**w
+
+def expected_size(sdr, w, b, M):
+    exp_w_x = sdr.n * (1 - p_not(sdr.w, sdr.n, M))
+    return comb(exp_w_x, b) * comb(sdr.n - exp_w_x, w - b)
 
 a = np.array([1,1,0])
 b = np.array([1,0,1])
