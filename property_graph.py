@@ -8,14 +8,13 @@ import sdr as sdr_tools
 
 def generate_random_sdr(n, w):
     rand_positions = random.sample(range(n), w)
-    res = np.zeros(n)
-    res[rand_positions] = 1
+    res = SDR.from_index_list(n, rand_positions)
     return res
 
 
 def main():
     n, w = 1024, 40
-    a = SDR(generate_random_sdr(n, w))
+    a = generate_random_sdr(n, w)
 
     thetas = list(range(0, w+1, 1))
     ratios = []
@@ -29,7 +28,7 @@ def main():
         
     noise = [1 - theta/w for theta in thetas[::-1]]
     plt.plot(noise, ratios[::-1])
-    plt.xlabel(f"Percentage noise for n = {n}, w = {w}")
+    plt.xlabel(f"Noise % for n = {n}, w = {w}")
     plt.ylabel(f"approximate probability / exact probability")
     plt.title(f"Variation of false probability approximation")
     plt.grid()
