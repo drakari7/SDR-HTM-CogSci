@@ -1,7 +1,6 @@
 import numpy as np
 from math import comb
 
-
 class SDR:
     """
     Sparse Distributed Representations code implementations.
@@ -54,49 +53,17 @@ class SDR:
         return self.w/self.n
 
 
-## ---------------------- SDR Utility Functions -------------------------
-# Number of unique SDRs for given n and w
-def uniq_sdr(n, w) -> int:
-    return comb(n, w)
-
-# Prob that 2 random SDRs are identical
-def prob_identical(n, w) -> float:
-    return 1/comb(n, w)
-
-# Exact probability of false positive match of sdr with parameters (w, theta)
-def exact_prob_fp(sdr:SDR, w, theta) -> float:
-    sum = 0
-    for b in range(theta, w+1):
-        sum += sdr.overlap_set(w, b)
-
-    denom = uniq_sdr(sdr.n, w)
-    return sum/denom
-
-# Approximation of above function
-def approx_prob_fp(sdr:SDR, w, theta) -> float:
-    return sdr.overlap_set(w, theta) / uniq_sdr(sdr.n, w)
-
-# Returns an SDR which is union of given SDRs
-def sdr_union(sdrs : list[SDR]) -> SDR:
-    ans = sdrs[0]
-    for sdr in sdrs[1:]:
-        ans |= sdr
-    return ans
-
-# def check_match(X, theta):
-#     for x in X:
-#         for y in X:
-#             if x!=y and match(x, y, theta):
-#                 return False
-#     return True
-
 def main():
     # For testing without affecting other modules that import this
     a = [1, 0, 0, 1, 0, 1, 0, 0, 0, 1]
     b = [0, 1, 0, 0, 1, 1, 0, 0, 0, 1]
     c = [1, 0, 1, 0, 1, 0, 0, 0, 0, 1]
-    
 
+    s1 = SDR(a)
+    s2 = SDR(b)
+
+    s3 = s1 | s2
+    print(s3.vec)
     pass
 
 
