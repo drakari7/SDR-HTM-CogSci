@@ -1,6 +1,7 @@
 from math import comb
 from sdr import SDR
 import random
+import os
 
 
 # Number of unique SDRs for given n and w
@@ -49,4 +50,4 @@ def generate_random_sdr(n, w):
 
 # Returns location to graph directory so everything is constant
 def get_graph_dir():
-    return "../graphs/"
+    return os.path.abspath("../graphs/")
