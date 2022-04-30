@@ -1,29 +1,298 @@
-\documentclass{article}
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
 \usepackage{graphicx}
-\usepackage{amsmath,amssymb}
-\usepackage[margin=1in,top=0.3in]{geometry}
-\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{tabularx,booktabs}
+\usepackage{caption}
+\usepackage{wrapfig}
+\usepackage[english]{babel}
+\usepackage[style=apa, backend=biber]{biblatex}
+\usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage{CormorantGaramond}
 
-\setlength{\parindent}{0in}
 
-\begin{document}
 
-\title{CS786A Project Report : Properties of Sparse Distributed Representations and their Application to Hierarchical Temporal Memory}
-\author{
+%% Set Journal Name on each page
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+% \lhead{\textit{\small Khulna University Studies}}
+\fancyfoot[C]{\thepage}
+%% *************** KUS Title **********************
+\usepackage{titlesec}
+\titleformat*{\section}{\fontsize{13}{01}\bfseries}
+\titleformat*{\subsection}{\fontsize{12}{01}\bfseries}
+\title{% added <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+\centering\normalsize  
+\vspace{-1in}
+% \colorbox{}{\parbox{\linewidth}{\textcolor{white}{\hfill\KUS \hfill}}} \\[0.5ex]
+% \begin{minipage}{\dimexpr0.5\linewidth-0.5\wlogo}\oriart\end{minipage}%
+% \begin{minipage}{\dimexpr0.5\linewidth+0.5\wlogo-6pt}\LOGO \end{minipage}\\[0.5ex]
+% \colorbox{black}{\parbox{\linewidth}{\textcolor{white}{\hfill\KUni\hfill}}}\\[1ex]
+\titleofArt
+}
+% \newlength{\wlogo}
+% ******************* KUS Title Formatting END *****
+
+% ************** DATA to be filled by the USER <<<<<<<<<<<<<<<<<<<<
+\author{ 
     Shreyash Ravi\\
     17807683\\
-    \and
+    \and    
     Khyathi Vagolu\\
     190432\\
     \and
     Deepankur Kansal\\
     180226\\
 }
-\date{}
-\maketitle
+\date{} 
+% \newcommand{\KUS}{\normalsize\bfseries\itshape }
+% \newcommand{\KUni}{\normalsize\bfseries\itshape Copyright\,©Khulna University}
+% \newcommand{\oriart}{\normalsize\bfseries ORIGINAL ARTICLE}
+% \setlength{\wlogo}{1cm}
+% \newcommand{\LOGO}{\includegraphics[width=\wlogo]{Figures/logo.png}}
+\newcommand{\titleofArt}{\textbf{ \large CS786A Project Report: Properties of Sparse Distributed Representations and their Application to Hierarchical Temporal Memory}}
+% ******************************
+
+%% ############ Reference SOURCE File ##############
+\addbibresource{ref.bib}
 
 
+\begin{document}
+\maketitle  
+%%%%%% DO NOT TOUCH THIS %%%%%%%%%%%%%%%%%%%%%%%%%%
+\fancypagestyle{Initial}{%
+    %\addtolength\topmargin{-0.7in}
+    \fancyhead{}
+}
+\thispagestyle{Initial}
+
+\noindent
+\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Abstract}
+Every region of the cortex encodes information using sparse activity patterns. Sparse Distributed Representations (SDRs) are cortical representations that encode information throughout the cortex and have a diverse variety of functions. Mathematically, given a population of neurons, an SDR represents their instantaneous activity as sparse n-dimensional vector of binary components. 
+In this project, we explore SDRs and examine their usefulness in Hierarchical Temporal Memory algorithms. Further, we implement code to demonstrate SDR properties, such as robustness, scalability, etc. as proposed in the paper. We also illustrate spacial pooling and temporal memory to see how several distinct SDRs are involved in HTM algorithms. 
+
+\hfill \break
+\hfill \break
+\textbf{Keywords:} Word, lower case, word
+\hfill \break
+\noindent
+\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Introduction}
+Type or paste your introduction here as prescribed by the journalÕs instructions for authors. Type or paste your introduction here as prescribed by the journalÕs instructions for authors. Type or paste your introduction here as prescribed by the journalÕs instructions for authors. Type or paste your introduction here as prescribed by the journalÕs instructions for authors. Type or paste your introduction here as prescribed by the journalÕs instructions for authors.
+Type or paste your introduction here as prescribed by the journalÕs instructions for authors. Type or paste your introduction here as prescribed by the journalÕs instructions for authors. Type or paste your introduction here as prescribed by the journalÕs instructions for authors. Type or paste your introduction here as prescribed by the journalÕs instructions for authors. Type or paste your introduction here as prescribed by the journalÕs instructions for authors. 
+Type or paste your introduction here as prescribed by the journalÕs instructions for authors. Type or paste your introduction here as prescribed by the journalÕs instructions for authors. Type or paste your introduction here as prescribed by the journalÕs instructions for authors. Type or paste your introduction here as prescribed by the journalÕs instructions for authors. Type or paste your introduction here as prescribed by the journalÕs instructions for authors. 
+%\addtolength\topmargin{0.7in} % Reduce extra margin from TOP for title page
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Mathematical properties of SDRs}
+This section describes some properties of SDRs, such as probability of
+mismatches, robustness, subsampling, classification of vectors, and unions. The properties demonstrate how SDRs can be used a memory storing device. 
+\\
+\subsection*{Definition} An SDR is an $n$-dimensional binary vector $x = [b_0, b_1,..b_n]$ with a small percentage of ON bits. $w_x$ is the number of ON bits in vector i.e., $w_x = ||x||_1$.
+\subsection*{Overlap}
+Overlap score or similarity between two SDRs is the number of ON bits in the same locations in both the SDRs. It can be computed as the dot product of the two vectors. 
+\begin{equation} 
+\label{eu_eqn}
+overlap(x,y)=x\cdot y
+\end{equation}
+\subsection*{Matching} 
+A match is when the overlap between two vectors is greater than some threshold $\theta$.
+\begin{equation} 
+\label{eu_eqn}
+match(x,y) \equiv overlap(x,y) \geq \theta
+\end{equation}
+Here $\theta \leq w_x, w_y$.
+
+\subsection*{Uniqueness}
+The number of unique SDRs for a given $n, w$ pair is given by:
+\begin{equation} 
+\label{eu_eqn}
+{n \choose w} = \frac{n!}{w! (n - w)!}
+\end{equation}
+The probability that two SDRs with the same $n, w$ pair are identical is 
+\begin{equation} 
+\label{eu_eqn}
+P(x=y) = 1/{n \choose w}
+\end{equation}
+This probability decreases rapidly as $w$ increases and is essentially zero in sparse vectors. Hence, it is highly likely for two randomly encoded SDRs to be unique.
+
+\subsection*{Overlap Set} 
+The overlap set of $x$ with respect to $b$ is $\Omega(n, w, b)$, defined as the set of vectors of size $n$ with $w$ bits on, that have exactly $b$ bits of overlap with $x$. The size of this set is given by:
+\begin{equation} 
+\label{eu_eqn}
+|\Omega_x(n, w, b)| = {w_x \choose b} \times {n - w_x \choose w - b}
+\end{equation}
+Here $b \leq w, w_x$. 
+
+\subsection*{Inexact Matching}
+Lowering $\theta$ decreases the sensitivity and increases the overall noise robustness of the system at the cost of more false positives. But with appropriate $n, w$ values, SDRs can have great noise robustness with a very small number of false positives.
+With $n \choose w$ total patterns, the probability of a false positive is:
+\begin{equation} 
+\label{eu_eqn}
+f p_w^n (\theta) = \frac{\sum_{b=\theta}^{w}|\Omega_x(n, w, b)|}{{n \choose w}}
+\end{equation}
+
+
+<graph>
+
+\subsection*{Subsampling}
+SDRs allow us to conveniently recognize large patterns only by comparing a subset of the ON bits in the large vector. But as the size of the subset decreases, the number of false positives increases although at a slow rate. \\
+Let $x$  be an SDR an $x'$ a subsampled version of $x$. 
+Now, the overlap set with respect to $x'$ and a random vector $y$ with $b \leq w_{x'}$ and $w_{x'} \leq w_y$ is:
+\begin{equation} 
+\label{eu_eqn}
+|\Omega_{x'}(n, w_y, b)| = {w_{x'} \choose b} \times {n - w_{x'} \choose w_y - b}
+\end{equation}
+
+And given a threshold $\theta \leq w_x$, the probability of a false positive between $x'$ and the random vector $y$ is:
+\begin{equation} 
+\label{eu_eqn}
+f p_{w_y}^n (\theta) = \frac{\sum_{b=\theta}^{w_{x'}}|\Omega_{x'}(n, w_y, b)|}{{n \choose w_y}}
+\end{equation}
+These equations differ from the above equations only by the vectors being compared.
+
+\subsection*{Classifying SDRs}
+Suppose we have a set of $M$ SDRs that are unique with respect to matching, we classify a new vector $y$ as part of set $M$ if it matches any one of the SDRs from set $M$. 
+To see how reliably we can classify a vector, we do the following: since all vectors in set $M$ are unique with respect to matching, the probability of getting a false positive is bounded by:
+\begin{equation} 
+\label{eu_eqn}
+f p_x(t) \leq \sum_{i=0}^M fp_{w_{x_i}}^n (t)
+\end{equation}
+When all the vectors in $M$ have the same $w$, the above equation becomes:
+\begin{equation} 
+\label{eu_eqn}
+f p_x(\theta) \leq M fp_w^n (\theta)
+\end{equation}
+
+\subsection*{Union Property}
+The union property of SDRs enables us to store a set of $M$ vectors by simply taking the OR of the vectors resulting in a new vector $X$. Now, to determine if a new SDR $y$ is a member of the set, we compute $match(X, y)$. Thus, a fixed size vector can store and operate on a dynamic list.
+\begin{equation} 
+\label{eu_eqn}
+y \in M \equiv match(X, y) = 1
+\end{equation}
+This property is used extensively in HTMs for making predictions, temporal pooling, representing invariances and creating a hierarchy in the model. In spite of it's remarkable utility, there is a limit on the number of SDRs that can be stored in the union. As the number of SDRs increases, the union vector gets saturated with ON bits to a point where it becomes useless (resulting is a great number of false positive matches).
+\\
+\noindent
+\textbf{Exact matching}: With $\theta = w$, the probability that a given bit is zero in a set of $M$ vectors is:
+\begin{equation} 
+\label{eu_eqn}
+p_0 = (1 - \frac{w}{n})^M
+\end{equation}
+Now, the probability of a false positive where all $w$ bits in $y$ (a random vector) are ON is:
+\begin{equation} 
+\label{eu_eqn}
+p_{fp} = (1-p_0)^w = (1 - (1 - \frac{w}{n})^M)^w
+\end{equation}
+
+
+
+<graph>
+\\
+\noindent
+\textbf{Inexact matching}: Now we have $\theta < w$ and the expected number of ON bits in the union vector $X$ would be $\Tilde w_X=n(1-p_0)$ and the expected size of overlap set is:
+\begin{equation} 
+\label{eu_eqn}
+E[|\Omega_{X}(n, w, b)|] = {\Tilde w_X \choose b} \times {n - \Tilde w_X \choose w - b}
+\end{equation}
+Now, for a match, we need at least $\theta$ bits to overlap. So the probability of a false positive (approximately) is:
+\begin{equation} 
+\label{eu_eqn}
+\varepsilon \approx \frac{|\Omega_{X}(n, w, b)|}{{n \choose w}}
+\end{equation}
+This probability increases as $\theta$ is decreased. This can be avoided by increasing $n$ in that case. 
+
+\subsection*{Computational efficiency}
+$O(w)$?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{SDRs and HTMs}
+In this section, we look at SDRs in the context of the HTM neuron model. Specifically, we explore the Spatial Pooling (SP) and Temporal Memory (TM) algorithms described in the paper and implement the same in python. 
+\\
+The following are constants used in the code: \\
+$N:$ size of input vector \\
+$C:$ number of columns \\
+$k:$ the number of columns active after spatial inhibition \\
+$L:$ number of cells per column \\
+$S:$ number of segments per cell
+\\
+\subsection*{Spatial Pooling}
+The Spatial Pooling algorithm takes a binary vector of length $N$ as input such that the vector is usually sparse and each column of the vector represents proximal segments in a cell. A binary $N \times C$ matrix (doesn't have to be sparse) is used to represent the set of connected synapses in the spatial pool. The vector and matrix are multiplied, resulting in a vector of overlap counts. Next, the indices corresponding to the top k overlaps are made equal to one and the rest are made zero, resulting in a binary vector of size $1 \times C$. 
+\\
+This algorithm examines the overlap between a randomly initialised matrix and the binary input vector (the SDR) and returns an SDR in which the indices corresponding to the top k columns form the ON bits. This SDR is then used as an input in Temporal Memory (TM) algorithms. 
+\vspace{2mm}
+\\
+\textbf{The overlap curve}: Let $X$ be a set of random binary vectors with size $n$ and $w_x$ ON bits. The probability that a new random vector $y$ matches with exactly one vector from set $X$ is:
+\begin{equation} 
+\label{eu_eqn}
+p(overlap(x, y)=b) = \frac{|\Omega_{y}(n, w_x, b)|}{{n \choose w_x}}
+\end{equation}
+The expected number of columns with $b$ bits of overlap is $|X| = C$. So the overlap for each column after sorting would result in the overlap curve. 
+From the curve, we observe that the sharper the drop off after k, the more robustness in the system. Thus, the robustness to noise can be increased by making the overlap curve sharper.
+
+\subsection*{Temporal Memory}
+The TM algorithm can be explained in two phases: 
+\\
+\textbf{Phase 1}: In this phase, the current active temporal states (at time step t) are calculated following Spatial Pooling. The cells in each column of the predicted state and the SP output SDR are examined. The ON cells in the columns corresponding to the ON bits in the SDR stay ON, representing the active temporal state. In other words, row-by-row element-wise multiplication is done between the $1 \times C$ SDR and the $L \times C$ predicted state, resulting in an $L\times C$ active state, all of which are sparse. 
+\\
+\textbf{Phase 2}: In this phase, 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\section*{Results}
+Type or paste your results here as prescribed by the journalÕs instructions for authors. Avoid redundant data that from the tables or illustrations.  Type or paste your results here as prescribed by the journalÕs instructions for authors. Type or paste your results here as prescribed by the journalÕs instructions for authors (Table~\ref{tb-label1}). Type or paste your results here as prescribed by the journalÕs instructions for authors. Type or paste your results here as prescribed by the journalÕs instructions for authors.  
+\captionsetup{justification=justified, singlelinecheck=off,labelfont=bf}
+\begin{table}[ht]
+
+    \centering
+    \caption{My caption}
+    \label{tb-label1}
+    \begin{tabularx}{\linewidth}{l*{5}{X}}
+    \hline
+    Word & Population & Area (Acre) & \multicolumn{3}{c}{Estimated waste generation}\\
+    \cline{4-6}
+    No. & & & Kg/capita/day & Kg/day & Percent\\
+   \hline
+    
+    1 & 18,250 & 747 & 0.27 & 4,928 & 31\\
+    2 & 9,500 & 38 & 0.29 & 2,755 & 17\\
+    3 & 12,200 & 181 & 0.15 & 1,830 & 12\\
+    \hline
+    Total & 103,903 & 3,316 & 0.15 & 15,700 & 100\\
+    \hline
+    \multicolumn{6}{l}{\footnotesize{Here is a footnote.}} \\
+    \end{tabularx}
+    
+\end{table}
+Type or paste your results here as prescribed by the journalÕs instructions for authors. Type or paste your results here as prescribed by the journalÕs instructions for authors. Type or paste your results here as prescribed by the journalÕs instructions for authors. Type or paste your results here as prescribed by the journalÕs instructions for authors (Figure 1). Type or paste your results here as prescribed by the journalÕs instructions for authors. 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=.5\linewidth]{Figures/sample-figure.png}
+	\caption{Type your title here. Obtain permission and include the acknowledgement required by the copyright holder if a figure is being reproduced from another source.}
+	\label{fig-lable1}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Discussions}
+Type or paste your discussion here as prescribed by the journalÕs instructions for authors. Type or paste your discussion here as prescribed by the journalÕs instructions for authors.	 Type or paste your discussion here as prescribed by the journalÕs instructions for authors. Type or paste your discussion here as prescribed by the journalÕs instructions for authors. Type or paste your discussion here as prescribed by the journalÕs instructions for authors.
+Type or paste your discussion here as prescribed by the journalÕs instructions for authors. Type or paste your discussion here as prescribed by the journalÕs instructions for authors.	 Type or paste your discussion here as prescribed by the journalÕs instructions for authors. Type or paste your discussion here as prescribed by the journalÕs instructions for authors. Type or paste your discussion here as prescribed by the journalÕs instructions for authors.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Conclusion}
+In this part, authors should conclude the significance of the study, emphasize its value and state expectation on future studies that may need to be carried out. In details, it may include summary of key findings, strengths and limitations of the study, controversies raised by this study, and future research directions, etc.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Acknowledgement}
+Type or paste your Acknowledgement here as prescribed by the journalÕs instructions for authors. This section is not added if the author does not have anyone to acknowledge.
+
+\section*{References}
+Please follow the \textbf{APA 7th edition} style for your references that is available at https://guides.unitec.ac.nz/apareferencing. The author should follow APA 7th edition reference style both in inside text and reference. Here is a sample to cite references (\cite{atanu2022}).
+
+\printbibliography
 \end{document}
-
-
-
+ 

@@ -38,7 +38,7 @@ def sdr_union(sdrs : list[SDR]) -> SDR:
 # Generates a random SDR with parameters n and w
 def generate_random_sdr(n, w):
     rand_positions = random.sample(range(n), w)
-    res = SDR.from_index_list(n, rand_positions)
+    res = SDR(n, rand_positions)
     return res
 
 # def check_match(X, theta):
@@ -50,4 +50,11 @@ def generate_random_sdr(n, w):
 
 # Returns location to graph directory so everything is constant
 def get_graph_dir():
-    return os.path.abspath("../graphs/")
+    curr_file = __file__
+    root_dir = '/'.join(curr_file.split('/')[:-2]) + '/'
+    return root_dir + 'graphs/'
+
+
+if __name__ == "__main__":
+    p = get_graph_dir()
+    print(p)

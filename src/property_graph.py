@@ -25,7 +25,7 @@ def main():
     plt.plot(noise, ratios[::-1])
     plt.xlabel(f"Noise % for n = {n}, w = {w}")
     plt.ylabel(f"approximate probability / exact probability")
-    plt.title(f"Variation of false probability approximation")
+    plt.title(f"Variation of false probability approximation with noise")
     plt.grid()
 
     file_name = graph_dir + 'fp_approximation.jpg'
